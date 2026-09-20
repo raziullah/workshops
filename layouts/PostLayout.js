@@ -11,7 +11,7 @@ export default function PostLayout({ frontMatter, next, prev, children, category
   return (
     <SectionContainer>
       <BlogSEO
-        url={`${siteMetadata.siteUrl}/${category}/${slug}`}
+        url={`${siteMetadata.siteUrl}/${slug}`}
         {...frontMatter}
       />
 

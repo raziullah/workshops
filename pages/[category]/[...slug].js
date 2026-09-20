@@ -36,8 +36,8 @@ export async function getStaticProps({ params }) {
   const prevItem = allPosts[postIndex - 1] || null
   const nextItem = allPosts[postIndex + 1] || null
 
-  const prev = prevItem ? { ...prevItem, slug: `${category}/${prevItem.slug}` } : null
-  const next = nextItem ? { ...nextItem, slug: `${category}/${nextItem.slug}` } : null
+  const prev = prevItem || null
+  const next = nextItem || null
 
   const post = await getFileBySlug(category, slugPath)
 
