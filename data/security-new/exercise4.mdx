@@ -74,7 +74,7 @@ Now let's grab the route URLs for the application, and download the pre-built ex
 ```bash
 export EDGE_URL=$(oc --namespace $NAMESPACE get route edge-server --output jsonpath='{.spec.host}')
 export SOCKETIO_URL=$(oc --namespace $NAMESPACE get route socketio-server --output jsonpath='{.spec.host}')
-curl -sSfL https://raw.githubusercontent.com/jmhbnz/workshops/main/data/workshop/setup/exercise4/exploit/payload.bin -o /tmp/payload.bin
+curl -sSfL https://raw.githubusercontent.com/jmhbnz/workshops/main/data/security-new/setup/exercise4/exploit/payload.bin -o /tmp/payload.bin
 ```
 
 Now deliver the exploit payload to the edge server webhook:
@@ -149,7 +149,7 @@ oc --namespace $NAMESPACE exec deploy/socketio-server -- rm -f /tmp/evidence/pwn
 Now let's address the exploit directly. Apply the hardened Socket.IO server deployment, which uses the Red Hat Hardened Images distroless Python image:
 
 ```bash
-curl --silent --fail --location "https://raw.githubusercontent.com/jmhbnz/workshops/main/data/workshop/setup/exercise4/k8s/socketio-server-hardened.yaml" \
+curl --silent --fail --location "https://raw.githubusercontent.com/jmhbnz/workshops/main/data/security-new/setup/exercise4/k8s/socketio-server-hardened.yaml" \
   | sed "s/\${SUFFIX}/${SUFFIX}/g; s/\${NAMESPACE}/${NAMESPACE}/g" \
   | oc apply --filename -
 ```
