@@ -102,7 +102,7 @@ If the exploit worked, you'll see output like:
 
 **The Socket.IO server has been compromised.** An attacker delivered arbitrary code through a pickle payload from outside the cluster. The server had no way to distinguish it from a legitimate inter-server message.
 
-> Take a minute to review the exploit source at [`exploit/poc.py`](https://github.com/jmhbnz/workshops/blob/main/data/workshop/setup/exercise4/exploit/poc.py) and the vulnerable server at [`socketio-server/server.py`](https://github.com/jmhbnz/workshops/blob/main/data/workshop/setup/exercise4/socketio-server/server.py). The server code itself looks completely normal. The vulnerability is in the `python-socketio` library's use of `pickle.loads()`.
+> Take a minute to review the exploit source at [`exploit/poc.py`](https://github.com/jmhbnz/workshops/blob/main/data/security-new/setup/exercise4/exploit/poc.py) and the vulnerable server at [`socketio-server/server.py`](https://github.com/jmhbnz/workshops/blob/main/data/workshop/setup/exercise4/socketio-server/server.py). The server code itself looks completely normal. The vulnerability is in the `python-socketio` library's use of `pickle.loads()`.
 
 
 ## 4.4 Harden the image
