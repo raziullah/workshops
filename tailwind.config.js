@@ -2,7 +2,14 @@ const defaultTheme = require('tailwindcss/defaultTheme')
 const colors = require('tailwindcss/colors')
 
 module.exports = {
-  content: ['./pages/**/*.js', './components/**/*.js', './layouts/**/*.js', './lib/**/*.js'],
+  content: {
+    sources: [
+      { pattern: './pages/**/*.js', negated: false },
+      { pattern: './components/**/*.js', negated: false },
+      { pattern: './layouts/**/*.js', negated: false },
+      { pattern: './lib/**/*.js', negated: false },
+    ],
+  },
   darkMode: 'class',
   theme: {
     extend: {
