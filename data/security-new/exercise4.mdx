@@ -80,7 +80,7 @@ curl -sSfL https://raw.githubusercontent.com/jmhbnz/workshops/main/data/security
 Now deliver the exploit payload to the edge server webhook:
 
 ```bash
-curl -X POST "https://${EDGE_URL}/webhook" \
+curl -k -X POST "https://${EDGE_URL}/webhook" \
   -H "Content-Type: application/octet-stream" \
   -H "X-Channel: socketio" \
   --data-binary @/tmp/payload.bin
@@ -91,7 +91,7 @@ You should see a JSON response confirming the payload was delivered and received
 Now check whether the exploit succeeded. The Socket.IO server exposes an `/evidence` endpoint that reads the evidence file:
 
 ```bash
-curl -sf "https://${SOCKETIO_URL}/evidence"
+curl -k -sf "https://${SOCKETIO_URL}/evidence"
 ```
 
 If the exploit worked, you'll see output like:
@@ -149,7 +149,7 @@ oc --namespace $NAMESPACE exec deploy/socketio-server -- rm -f /tmp/evidence/pwn
 Now let's address the exploit directly. Apply the hardened Socket.IO server deployment, which uses the Red Hat Hardened Images distroless Python image:
 
 ```bash
-curl --silent --fail --location "https://raw.githubusercontent.com/jmhbnz/workshops/main/data/security-new/setup/exercise4/k8s/socketio-server-hardened.yaml" \
+curl -k --silent --fail --location "https://raw.githubusercontent.com/jmhbnz/workshops/main/data/security-new/setup/exercise4/k8s/socketio-server-hardened.yaml" \
   | sed "s/\${SUFFIX}/${SUFFIX}/g; s/\${NAMESPACE}/${NAMESPACE}/g" \
   | oc apply --filename -
 ```
@@ -188,7 +188,7 @@ You should see `quay.io/smileyfritz/socketio-server:0.1.0-hardened`.
 Re-run the exploit against the hardened server. The edge server and Redis still relay the payload as before:
 
 ```bash
-curl -X POST "https://${EDGE_URL}/webhook" \
+curl -k -X POST "https://${EDGE_URL}/webhook" \
   -H "Content-Type: application/octet-stream" \
   -H "X-Channel: socketio" \
   --data-binary @/tmp/payload.bin
@@ -197,7 +197,7 @@ curl -X POST "https://${EDGE_URL}/webhook" \
 Now check the `/evidence` endpoint:
 
 ```bash
-curl -sf "https://${SOCKETIO_URL}/evidence"
+curl -k -sf "https://${SOCKETIO_URL}/evidence"
 ```
 
 This time the response will be empty — **no evidence file was created** ⛔. The exploit payload called `subprocess.call(["/bin/bash", ...])` and there is no `/bin/bash` in the Red Hat Hardened Images distroless image. The pickle deserialization still triggered, but the code execution failed.
