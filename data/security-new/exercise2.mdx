@@ -52,11 +52,27 @@ namespace=$(oc project --short)
 
 for master in $(oc get nodes --selector node-role.kubernetes.io/master --output name); do
   echo "=== Searching logs on ${master} ==="
-  oc adm node-logs "${master}" --path=kube-apiserver/audit.log \
-    | jq --arg ns "${namespace}" 'first(select(.objectRef.namespace == $ns
-          and .objectRef.name == "payment-gateway"
-          and .verb == "create"
-          and .objectRef.subresource == "exec"))'
+
+  # Get list of audit log files, sorted newest first (current audit.log first, then rotated)
+  log_files=$(oc adm node-logs "${master}" --path=kube-apiserver/ 2>/dev/null | grep -E '^audit.*\.log$' | sort -r)
+
+  # Add current audit.log first, then take next 2 rotated logs
+  for log_file in audit.log $(echo "$log_files" | grep -E '^audit-' | head -2); do
+    echo "Checking ${log_file}..."
+    result=$(oc adm node-logs "${master}" --path=kube-apiserver/${log_file} 2>/dev/null \
+      | jq --arg ns "${namespace}" 'select(.objectRef.namespace == $ns
+            and .objectRef.name == "payment-gateway"
+            and .verb == "get"
+            and .stage == "ResponseStarted"
+            and .objectRef.subresource == "exec")' 2>/dev/null \
+      | head -50)
+
+    if [ -n "$result" ]; then
+      echo "Found in ${log_file}:"
+      echo "$result"
+      break
+    fi
+  done
 done
 ```
 
